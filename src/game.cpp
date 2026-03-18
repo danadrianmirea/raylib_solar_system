@@ -45,16 +45,20 @@ Game::Game(int width, int height) : width(width), height(height)
     // Create celestial bodies (values match src/solar_system.py)
     sun = CelestialBody{0.0f, 0.0f, 30.0f, YELLOW, 1.989e30, 0.0f, 0.0f, 0.0f, "Sun"};
 
+    // Spread bodies farther apart (initial orbital radius + starting x/y).
+    // This does not change planet size or orbital speed; it only scales distance.
+    constexpr float spacingFactor = 1.5f;
+
     const float speed = simulationSpeed;
     planets = {
-        CelestialBody{60.0f, 0.0f, 4.0f, GRAY, 3.285e23, 60.0f, 4.17f * speed, 0.0f, "Mercury"},
-        CelestialBody{90.0f, 0.0f, 6.0f, ORANGE, 4.867e24, 90.0f, 1.61f * speed, 0.0f, "Venus"},
-        CelestialBody{150.0f, 0.0f, 10.0f, GREEN, 5.972e24, 150.0f, 1.0f * speed, 0.0f, "Earth"},
-        CelestialBody{200.0f, 0.0f, 8.0f, RED, 6.39e23, 200.0f, 0.53f * speed, 0.0f, "Mars"},
-        CelestialBody{300.0f, 0.0f, 20.0f, ORANGE, 1.898e27, 300.0f, 0.084f * speed, 0.0f, "Jupiter"},
-        CelestialBody{400.0f, 0.0f, 18.0f, YELLOW, 5.683e26, 400.0f, 0.034f * speed, 0.0f, "Saturn"},
-        CelestialBody{500.0f, 0.0f, 15.0f, SKYBLUE, 8.681e25, 500.0f, 0.012f * speed, 0.0f, "Uranus"},
-        CelestialBody{600.0f, 0.0f, 15.0f, DARKBLUE, 1.024e26, 600.0f, 0.006f * speed, 0.0f, "Neptune"},
+        CelestialBody{60.0f * spacingFactor, 0.0f, 4.0f, GRAY, 3.285e23, 60.0f * spacingFactor, 4.17f * speed, 0.0f, "Mercury"},
+        CelestialBody{90.0f * spacingFactor, 0.0f, 6.0f, ORANGE, 4.867e24, 90.0f * spacingFactor, 1.61f * speed, 0.0f, "Venus"},
+        CelestialBody{150.0f * spacingFactor, 0.0f, 10.0f, GREEN, 5.972e24, 150.0f * spacingFactor, 1.0f * speed, 0.0f, "Earth"},
+        CelestialBody{200.0f * spacingFactor, 0.0f, 8.0f, RED, 6.39e23, 200.0f * spacingFactor, 0.53f * speed, 0.0f, "Mars"},
+        CelestialBody{300.0f * spacingFactor, 0.0f, 20.0f, ORANGE, 1.898e27, 300.0f * spacingFactor, 0.084f * speed, 0.0f, "Jupiter"},
+        CelestialBody{400.0f * spacingFactor, 0.0f, 18.0f, YELLOW, 5.683e26, 400.0f * spacingFactor, 0.034f * speed, 0.0f, "Saturn"},
+        CelestialBody{500.0f * spacingFactor, 0.0f, 15.0f, SKYBLUE, 8.681e25, 500.0f * spacingFactor, 0.012f * speed, 0.0f, "Uranus"},
+        CelestialBody{600.0f * spacingFactor, 0.0f, 15.0f, DARKBLUE, 1.024e26, 600.0f * spacingFactor, 0.006f * speed, 0.0f, "Neptune"},
     };
 }
 
