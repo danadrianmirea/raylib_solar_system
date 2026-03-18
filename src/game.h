@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "raylib.h"
 #include "globals.h"
 
@@ -9,63 +10,48 @@ class Game
 public:
     Game(int width, int height);
     ~Game();
-    void InitGame();
-    void Reset();
     void Update(float dt);
-    void HandleInput();
-    void UpdateUI();
-    void UpdateMenu();
-
     void Draw();
-    void DrawUI();
-    void DrawMainMenu();
-    void DrawOptionsMenu();
-    std::string FormatWithLeadingZeroes(int number, int width);
-    void Randomize();
-
-    static bool isMobile;
 
 private:
-    bool isInitialLaunch = true;
-    bool isInExitMenu;
-    bool lostWindowFocus = false;
-    bool gameOver;
-    bool isInMainMenu = false;
-    bool isInOptionsMenu = false;
-    int currentMenuSelection = 0;
-    int optionsMenuSelection = 0;
-    float soundVolume = 1.0f;
-    float musicVolume = 1.0f;
-    bool isDraggingSoundSlider = false;
-    bool isDraggingMusicSlider = false;
-    bool isInExitConfirmation = false;
-    bool isMusicPlaying = false;
-
-    // Key repeat variables for options menu
-    float keyRepeatDelay = 0.2f;  // Initial delay before repeat starts
-    float keyRepeatInterval = 0.03f;  // Interval between repeats
-    float leftKeyTimer = 0.0f;
-    float rightKeyTimer = 0.0f;
-    float upKeyTimer = 0.0f;
-    float downKeyTimer = 0.0f;
-    bool leftKeyPressed = false;
-    bool rightKeyPressed = false;
-    bool upKeyPressed = false;
-    bool downKeyPressed = false;
-
-    float screenScale;
-    RenderTexture2D targetRenderTex;
-    Font font;
-
     int width;
     int height;
 
-    float ballX;
-    float ballY;
-    int ballRadius;
-    float ballSpeed;
-    Color ballColor;
+    struct CelestialBody
+    {
+        float x = 0.0f;
+        float y = 0.0f;
+        float radius = 1.0f;
+        Color color = WHITE;
+        double mass = 0.0;
+        float orbitalRadius = 0.0f;
+        float orbitalSpeed = 0.0f;
+        float angle = 0.0f;
+        std::string name;
 
-    Music backgroundMusic;
-    Sound actionSound;
+        void Update(float dt);
+        void Draw(int screenWidth, int screenHeight, float viewZoom, float viewOffsetX, float viewOffsetY) const;
+    };
+
+    static Vector2 ScreenToWorld(float screenX, float screenY, int screenWidth, int screenHeight, float viewZoom, float viewOffsetX, float viewOffsetY);
+
+    void HandleInput();
+    void DrawSolarSystem() const;
+
+    // Simulation settings
+    const float simulationSpeed = 1.5f;
+
+    // View settings
+    const float zoomFactor = 1.2f;
+    const float minZoom = 0.1f;
+    const float maxZoom = 10.0f;
+    float viewZoom = 0.83f;
+    float viewOffsetX = 227.0f;
+    float viewOffsetY = 65.0f;
+    bool isPanning = false;
+    Vector2 lastMousePos = {0.0f, 0.0f};
+
+    // Bodies
+    CelestialBody sun;
+    std::vector<CelestialBody> planets;
 };

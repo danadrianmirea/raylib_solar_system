@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "globals.h"
 #include "game.h"
-#include <iostream>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -17,16 +16,11 @@ void mainLoop()
 
 int main()
 {
-    InitWindow(gameScreenWidth, gameScreenHeight, "Game Template");
-    InitAudioDevice();
-#ifndef EMSCRIPTEN_BUILD
-    SetWindowState(FLAG_WINDOW_RESIZABLE);
-#endif
+    InitWindow(gameScreenWidth, gameScreenHeight, "Solar System");
     SetExitKey(KEY_NULL);
-    SetTargetFPS(144);
+    SetTargetFPS(60);
     
     game = new Game(gameScreenWidth, gameScreenHeight);
-    game->Randomize();
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(mainLoop, 0, 1);
@@ -39,7 +33,6 @@ int main()
         mainLoop();
     }
     delete game;
-    CloseAudioDevice();
     CloseWindow();
 #endif
 
