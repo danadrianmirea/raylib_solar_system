@@ -154,7 +154,7 @@ void Game::DrawSolarSystem() const
         "ESC: Quit",
     };
 
-    int xRight = width - 200;
+    int xRight = width - 250;
     y = 10;
     for (const char* line : controls)
     {
