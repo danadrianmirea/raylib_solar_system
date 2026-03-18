@@ -60,13 +60,33 @@ Game::Game(int width, int height) : width(width), height(height)
         CelestialBody{500.0f * spacingFactor, 0.0f, 15.0f, SKYBLUE, 8.681e25, 500.0f * spacingFactor, 0.012f * speed, 0.0f, "Uranus"},
         CelestialBody{600.0f * spacingFactor, 0.0f, 15.0f, DARKBLUE, 1.024e26, 600.0f * spacingFactor, 0.006f * speed, 0.0f, "Neptune"},
     };
+
+    // Render the entire simulation (including UI) to a fixed-size texture.
+    targetRenderTex = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
+    SetTextureFilter(targetRenderTex.texture, TEXTURE_FILTER_BILINEAR);
 }
 
-Game::~Game() = default;
+Game::~Game()
+{
+    if (targetRenderTex.id != 0)
+        UnloadRenderTexture(targetRenderTex);
+}
 
 void Game::HandleInput()
 {
-    Vector2 mousePos = GetMousePosition();
+    // Convert real screen coordinates to the virtual 800x600 coordinates.
+    // This keeps input behavior consistent when the window is resized/maximized.
+    float realW = (float)GetScreenWidth();
+    float realH = (float)GetScreenHeight();
+    screenScale = MIN(realW / (float)gameScreenWidth, realH / (float)gameScreenHeight);
+    screenOffset.x = (realW - (float)gameScreenWidth * screenScale) * 0.5f;
+    screenOffset.y = (realH - (float)gameScreenHeight * screenScale) * 0.5f;
+
+    Vector2 mousePosReal = GetMousePosition();
+    Vector2 mousePos = {
+        (mousePosReal.x - screenOffset.x) / screenScale,
+        (mousePosReal.y - screenOffset.y) / screenScale
+    };
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
@@ -94,19 +114,19 @@ void Game::HandleInput()
         // - zoom in/out clamped
         // - "zoom at mouse position" math preserved as-is (even though it cancels out)
         float oldZoom = viewZoom;
-        Vector2 world = ScreenToWorld(mousePos.x, mousePos.y, width, height, viewZoom, viewOffsetX, viewOffsetY);
+        Vector2 world = ScreenToWorld(mousePos.x, mousePos.y, gameScreenWidth, gameScreenHeight, viewZoom, viewOffsetX, viewOffsetY);
 
         if (wheel > 0.0f)
         {
             viewZoom = std::min(viewZoom * zoomFactor, maxZoom);
-            viewOffsetX += (world.x - (mousePos.x - width / 2.0f + viewOffsetX * oldZoom) / oldZoom);
-            viewOffsetY += (world.y - (mousePos.y - height / 2.0f + viewOffsetY * oldZoom) / oldZoom);
+            viewOffsetX += (world.x - (mousePos.x - gameScreenWidth / 2.0f + viewOffsetX * oldZoom) / oldZoom);
+            viewOffsetY += (world.y - (mousePos.y - gameScreenHeight / 2.0f + viewOffsetY * oldZoom) / oldZoom);
         }
         else
         {
             viewZoom = std::max(viewZoom / zoomFactor, minZoom);
-            viewOffsetX += (world.x - (mousePos.x - width / 2.0f + viewOffsetX * oldZoom) / oldZoom);
-            viewOffsetY += (world.y - (mousePos.y - height / 2.0f + viewOffsetY * oldZoom) / oldZoom);
+            viewOffsetX += (world.x - (mousePos.x - gameScreenWidth / 2.0f + viewOffsetX * oldZoom) / oldZoom);
+            viewOffsetY += (world.y - (mousePos.y - gameScreenHeight / 2.0f + viewOffsetY * oldZoom) / oldZoom);
         }
     }
 }
@@ -169,8 +189,27 @@ void Game::DrawSolarSystem() const
 
 void Game::Draw()
 {
-    BeginDrawing();
+    // Render everything to a fixed-size texture first.
+    BeginTextureMode(targetRenderTex);
     DrawSolarSystem();
+    EndTextureMode();
+
+    // Scale and center the fixed render texture to the actual window size.
+    float realW = (float)GetScreenWidth();
+    float realH = (float)GetScreenHeight();
+    screenScale = MIN(realW / (float)gameScreenWidth, realH / (float)gameScreenHeight);
+    screenOffset.x = (realW - (float)gameScreenWidth * screenScale) * 0.5f;
+    screenOffset.y = (realH - (float)gameScreenHeight * screenScale) * 0.5f;
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawTexturePro(
+        targetRenderTex.texture,
+        {0, 0, (float)targetRenderTex.texture.width, (float)-targetRenderTex.texture.height},
+        {screenOffset.x, screenOffset.y, (float)gameScreenWidth * screenScale, (float)gameScreenHeight * screenScale},
+        {0, 0},
+        0.0f,
+        WHITE);
     EndDrawing();
 }
 

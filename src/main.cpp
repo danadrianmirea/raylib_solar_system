@@ -16,6 +16,10 @@ void mainLoop()
 
 int main()
 {
+#ifndef EMSCRIPTEN_BUILD
+    // Allow maximize/resizing by creating a resizable window.
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+#endif
     InitWindow(gameScreenWidth, gameScreenHeight, "Solar System");
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);

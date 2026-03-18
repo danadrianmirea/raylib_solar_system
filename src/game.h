@@ -16,6 +16,8 @@ public:
 private:
     int width;
     int height;
+    float screenScale = 1.0f;
+    Vector2 screenOffset = {0.0f, 0.0f}; // letterbox/pillarbox offset in real screen coords
 
     struct CelestialBody
     {
@@ -54,4 +56,6 @@ private:
     // Bodies
     CelestialBody sun;
     std::vector<CelestialBody> planets;
+
+    RenderTexture2D targetRenderTex{};
 };
