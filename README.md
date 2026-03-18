@@ -24,7 +24,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-The executable is produced in `build/` (for example `build/raylib_cmake_template.exe`).
+The executable is produced in `build/` (for example `build/raylib_solar_system.exe`).
 
 ## Project Structure
 

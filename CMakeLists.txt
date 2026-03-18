@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(raylib_cmake_template VERSION 1.0)
+project(raylib_solar_system VERSION 1.0)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 14)
