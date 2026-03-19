@@ -18,6 +18,7 @@ private:
     int height;
     float screenScale = 1.0f;
     Vector2 screenOffset = {0.0f, 0.0f}; // letterbox/pillarbox offset in real screen coords
+    static constexpr float timeScale = 0.33f;
 
     struct CelestialBody
     {

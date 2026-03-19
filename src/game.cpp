@@ -9,7 +9,7 @@ void Game::CelestialBody::Update(float dt)
 {
     if (orbitalRadius != 0.0f && orbitalSpeed != 0.0f)
     {
-        angle += orbitalSpeed * dt;
+        angle += orbitalSpeed * dt * timeScale;
         x = cosf(angle) * orbitalRadius;
         y = sinf(angle) * orbitalRadius;
     }
