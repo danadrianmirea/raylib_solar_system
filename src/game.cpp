@@ -42,7 +42,6 @@ Vector2 Game::ScreenToWorld(float screenX, float screenY, int screenWidth, int s
 
 Game::Game(int width, int height) : width(width), height(height)
 {
-    // Create celestial bodies (values match src/solar_system.py)
     sun = CelestialBody{0.0f, 0.0f, 30.0f, YELLOW, 1.989e30, 0.0f, 0.0f, 0.0f, "Sun"};
 
     // Spread bodies farther apart (initial orbital radius + starting x/y).
@@ -74,8 +73,6 @@ Game::~Game()
 
 void Game::HandleInput()
 {
-    // Convert real screen coordinates to the virtual 800x600 coordinates.
-    // This keeps input behavior consistent when the window is resized/maximized.
     float realW = (float)GetScreenWidth();
     float realH = (float)GetScreenHeight();
     screenScale = MIN(realW / (float)gameScreenWidth, realH / (float)gameScreenHeight);
@@ -110,9 +107,6 @@ void Game::HandleInput()
     float wheel = GetMouseWheelMove();
     if (wheel != 0.0f)
     {
-        // Match src/solar_system.py:
-        // - zoom in/out clamped
-        // - "zoom at mouse position" math preserved as-is (even though it cancels out)
         float oldZoom = viewZoom;
         Vector2 world = ScreenToWorld(mousePos.x, mousePos.y, gameScreenWidth, gameScreenHeight, viewZoom, viewOffsetX, viewOffsetY);
 
@@ -162,13 +156,13 @@ void Game::DrawSolarSystem() const
         p.Draw(width, height, viewZoom, viewOffsetX, viewOffsetY);
     }
 
-    // UI text (matches src/solar_system.py)
-    int fontSize = 16;
+    int fontSize = 20;
     int y = 10;
+    int lineSpacing = 30;
     DrawText(TextFormat("Zoom: %.2fx", viewZoom), 10, y, fontSize, WHITE);
-    y += 20;
+    y += lineSpacing;
     DrawText(TextFormat("View Offset X: %.1f", viewOffsetX), 10, y, fontSize, WHITE);
-    y += 20;
+    y += lineSpacing;
     DrawText(TextFormat("View Offset Y: %.1f", viewOffsetY), 10, y, fontSize, WHITE);
 
     const char* controls[] = {
@@ -178,12 +172,12 @@ void Game::DrawSolarSystem() const
         "ESC: Quit",
     };
 
-    int xRight = width - 250;
+    int xRight = width - 300;
     y = 10;
     for (const char* line : controls)
     {
         DrawText(line, xRight, y, fontSize, WHITE);
-        y += 20;
+        y += lineSpacing;
     }
 }
 
